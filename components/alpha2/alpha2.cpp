@@ -47,6 +47,22 @@ static void publish_temperature_(sensor::Sensor *sensor, const uint8_t *obj, siz
   sensor->publish_state(to_celsius_(protocol::read_float_be(obj + offset)));
 }
 
+// Panel settings as reported in 86/350
+static std::string user_setting_to_string_(uint8_t value) {
+  static const char *const NAMES[] = {
+      "Constant curve I",        "Constant curve II",      "Constant curve III",
+      "Constant pressure I",     "Constant pressure II",   "Constant pressure III",
+      "Proportional pressure I", "Proportional pressure II", "Proportional pressure III",
+      "Constant curve AUTOADAPT", "Constant pressure AUTOADAPT", "Proportional pressure AUTOADAPT",
+      "PWM A profile 1",         "PWM A profile 2",        "PWM A profile 3",
+      "PWM C",                   "Analogue 0-10 V",        "TRC1",
+      "Constant speed AUTOADAPT", "TRC2",                  "TRC3",
+  };
+  if (value < sizeof(NAMES) / sizeof(NAMES[0]))
+    return NAMES[value];
+  return "Unknown (" + to_string(value) + ")";
+}
+
 #ifdef USE_TEXT_SENSOR
 static std::string operation_mode_to_string_(uint8_t value) {
   switch (value) {
@@ -114,22 +130,6 @@ static std::string control_mode_to_string_(uint8_t value) {
     default:
       return "Unknown (" + to_string(value) + ")";
   }
-}
-
-// Panel settings as reported in 86/350
-static std::string user_setting_to_string_(uint8_t value) {
-  static const char *const NAMES[] = {
-      "Constant curve I",        "Constant curve II",      "Constant curve III",
-      "Constant pressure I",     "Constant pressure II",   "Constant pressure III",
-      "Proportional pressure I", "Proportional pressure II", "Proportional pressure III",
-      "Constant curve AUTOADAPT", "Constant pressure AUTOADAPT", "Proportional pressure AUTOADAPT",
-      "PWM A profile 1",         "PWM A profile 2",        "PWM A profile 3",
-      "PWM C",                   "Analogue 0-10 V",        "TRC1",
-      "Constant speed AUTOADAPT", "TRC2",                  "TRC3",
-  };
-  if (value < sizeof(NAMES) / sizeof(NAMES[0]))
-    return NAMES[value];
-  return "Unknown (" + to_string(value) + ")";
 }
 
 static std::string control_source_to_string_(uint8_t value) {
