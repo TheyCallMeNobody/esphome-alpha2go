@@ -891,6 +891,7 @@ void Alpha2::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc
       break;
     }
     case ESP_GATTC_DISCONNECT_EVT: {
+      ESP_LOGW(TAG, "[%s] disconnected, reason=0x%x", this->parent_->address_str(), param->disconnect.reason);
       this->node_state = espbt::ClientState::IDLE;
       this->reset_link_state_();
       this->publish_unavailable_();
